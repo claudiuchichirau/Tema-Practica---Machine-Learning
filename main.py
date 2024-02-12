@@ -1,4 +1,3 @@
-# Exemplu de cod Python pentru procesarea datelor
 import string
 import os
 import math
@@ -15,28 +14,23 @@ def load_data(base_directory, folders):
     emails = []
     labels = []
 
-    # Parcurgeți fiecare folder specificat
     for folder in folders:
         folder_path = os.path.join(base_directory, folder).replace("\\", "/")
 
         print("Loading emails from folder:", folder_path)
 
-        # Parcurgeți fiecare fișier în folder
         for filename in os.listdir(folder_path):
             file_path = os.path.join(folder_path, filename)
 
-            # Deschideți fișierul și analizați conținutul email-ului
             with open(file_path, 'rb') as f:
                 msg = BytesParser(policy=policy.default).parse(f)
                 emails.append(msg.get_body(preferencelist=('plain')).get_content())
 
-            # Verificați dacă email-ul este spam sau nu
             if "spm" in filename:
                 labels.append(1)  # Spam
             else:
                 labels.append(0)  # Non-spam
 
-    # Creați un DataFrame din email-uri și etichete
     df = pd.DataFrame({
         'email': emails,
         'label': labels
@@ -129,23 +123,17 @@ def Naive_Bayes_main(train_data, test_data):
         model = NaiveBayes()
         model.fit(train_data["email_tokens"], train_data["label"])
 
-        # Predict on the training set
+        # training set
         train_predictions = model.predict(train_data["email_tokens"], laplace_smooth)
         train_accuracy = sum(train_predictions == train_data["label"]) / len(train_data)
         print(f'Train Accuracy for laplace_smooth = {laplace_smooth}: {train_accuracy}')
         
-        # Predict on the test set
+        # test set
         test_predictions = model.predict(test_data["email_tokens"], laplace_smooth)
         test_accuracy = sum(test_predictions == test_data["label"]) / len(test_data)
         print(f'Test Accuracy for laplace_smooth = {laplace_smooth}: {test_accuracy}')
         
         accuracies.append(test_accuracy)
-
-        # predictions = model.predict(test_data["email_tokens"], laplace_smooth)
-        # print("Predictions:", predictions)
-        # accuracy = sum(predictions == test_data["label"]) / len(test_data)
-        # print("Accuracy for laplace_smooth =", laplace_smooth, ":", accuracy)
-        # accuracies.append(accuracy)
 
     # Generarea graficului
     plt.plot([0.1, 1.0, 10.0, 100.0], accuracies)
@@ -200,7 +188,6 @@ def Self_training_main(train_data, unlabeled_data, test_data):
     plt.show()
 
 def main():
-    # Încărcarea datelor
     # train_data = load_data("data", ["part1", "part2", "part3", "part4", "part5", "part6", "part7", "part8", "part9"])
     train_data = load_data("data", ["part1", "part2", "part3", "part4"])
     test_data = load_data("data", ["part10"])
